@@ -68,4 +68,20 @@ public class SalesController : ControllerBase
 
         return CreatedAtAction(nameof(Get), new { id = sale.SaleId }, sale);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSale(int id)
+    {
+        var sale = await _db.Sales.FindAsync(id);
+        if (sale == null)
+        {
+            return NotFound();
+        }
+
+        _db.Sales.Remove(sale);
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+
 }
