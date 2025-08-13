@@ -19,7 +19,23 @@ public class SalesController : ControllerBase
             .Include(s => s.Country)
             .Include(s => s.SalesUser)
             .AsNoTracking()
+            .Select(s => new SaleDto
+            {
+                SaleId = s.SaleId,
+                CountryId = s.CountryId,
+                CountryName = s.Country.CountryName,
+                CityId = s.CityId,
+                CityName = s.City.CityName,
+                ProductId = s.ProductId,
+                ProductName = s.Product.ProductName,
+                Quantity = s.Quantity,
+                Amount = s.Amount,
+                UserId = s.UserId,
+                UserName = s.SalesUser.UserName,
+                SaleDate = s.SaleDate
+            })
             .ToListAsync();
+
         return Ok(sales);
     }
 
@@ -32,7 +48,23 @@ public class SalesController : ControllerBase
             .Include(s => s.Country)
             .Include(s => s.SalesUser)
             .AsNoTracking()
-            .FirstOrDefaultAsync(s => s.SaleId == id);
+            .Where(s => s.SaleId == id)
+            .Select(s => new SaleDto
+            {
+                SaleId = s.SaleId,
+                CountryId = s.CountryId,
+                CountryName = s.Country.CountryName,
+                CityId = s.CityId,
+                CityName = s.City.CityName,
+                ProductId = s.ProductId,
+                ProductName = s.Product.ProductName,
+                Quantity = s.Quantity,
+                Amount = s.Amount,
+                UserId = s.UserId,
+                UserName = s.SalesUser.UserName,
+                SaleDate = s.SaleDate
+            })
+            .FirstOrDefaultAsync();
 
         if (sale == null) return NotFound();
         return Ok(sale);
@@ -84,4 +116,31 @@ public class SalesController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("countries")]
+    public async Task<IActionResult> GetCountries()
+    {
+        var countries = await _db.Countries.AsNoTracking().ToListAsync();
+        return Ok(countries);
+    }
+
+    [HttpGet("cities")]
+    public async Task<IActionResult> GetCities()
+    {
+        var cities = await _db.Cities.AsNoTracking().ToListAsync();
+        return Ok(cities);
+    }
+
+    [HttpGet("users")]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = await _db.Users.AsNoTracking().ToListAsync();
+        return Ok(users);
+    }
+
+    [HttpGet("products")]
+    public async Task<IActionResult> GetProducts()
+    {
+        var products = await _db.Products.AsNoTracking().ToListAsync();
+        return Ok(products);
+    }
 }
